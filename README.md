@@ -42,4 +42,19 @@ jira-checkout https://foobar.atlassian.net/browse/FOO-1337
 jira-checkout FOO-1337
 ```
 
-Your branch will be created, including the id and title, set up to track the upstream one that will be created as well.
+Your branch will be created, including the verb, id and title, set up to track the upstream one that will be created as well.
+
+**Example**:
+
+```
+feat/FOO-1337-do-something-in-this-task
+```
+
+Semantic issue type mapping:
+
+| Issue type    | Verb  |
+|---------------|-------|
+| Task          | feat  |
+| Sub-task      | feat  |
+| Bug           | fix   |
+| Anything else | chore |
