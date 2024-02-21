@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+C_OFF='\033[0m'       # Text Reset
+C_GREEN='\033[0;32m'        
+C_BLUE='\033[0;34m'
+C_RED='\033[0;31m'
+
 if [ $# -ne 1 ]; then
   echo "Please specify a JIRA ticket"
   exit -1
@@ -17,7 +23,24 @@ else
     JIRA_BRANCH_TYPE="chore"
 fi
 
-JIRA_BRANCH_NAME="$JIRA_BRANCH_TYPE/$JIRA_ID-$(echo $JIRA_ISSUE_CONTENT | jq -r '.fields.summary' | sed -E 's/[^A-Za-z0-9]+/-/g' | tr '[:upper:]' '[:lower:]' | sed -E 's/^-*(.+)-*$/\1/')"
+JIRA_SUFFIX="$(echo $JIRA_ISSUE_CONTENT | jq -r '.fields.summary' | sed -E 's/[^A-Za-z0-9]+/-/g' | tr '[:upper:]' '[:lower:]' | sed -E 's/^-*(.+)-*$/\1/')"
+
+echo -e "The branch suffix will be named: ${C_BLUE}$JIRA_SUFFIX${C_OFF}"
+echo "would you like to edit it? [y/n]"
+
+read input
+if [ "$input" = "y" ]; then
+    echo "write the name you would like: "
+    read name
+    JIRA_SUFFIX="$name"
+elif [ "$input" != "n" ]; then
+    echo -e "${C_RED}input not recognized, expected 'y' or 'n'${C_OFF}"
+    exit
+fi
+
+JIRA_BRANCH_NAME="$JIRA_BRANCH_TYPE/$JIRA_ID-$JIRA_SUFFIX"
+
+echo -e "Branch name will be: ${C_GREEN}$JIRA_BRANCH_NAME${C_OFF}"
 
 git checkout -b $JIRA_BRANCH_NAME
 git push --set-upstream origin $JIRA_BRANCH_NAME
